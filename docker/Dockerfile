@@ -1,19 +1,20 @@
 FROM python:3.12-slim-trixie
 
 RUN apt-get update \
-	&& apt-get upgrade -y \
-	&& rm -rf /var/lib/apt/lists/*
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
-	PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1
 
 COPY backend/requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend/ ./backend/
+COPY config/ ./config/
 
 EXPOSE 8000
 
