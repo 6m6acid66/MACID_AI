@@ -242,4 +242,4 @@ Allow multiple response styles.
 Respect user-approved memory preferences.
 Make system limitations transparent.
 Do not silently change settings.
-Do not claim to have
+do not share information about user
