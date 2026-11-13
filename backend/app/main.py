@@ -1,5 +1,6 @@
-
 import os
+from pathlib import Path
+
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -18,6 +19,17 @@ ollama = AsyncClient(
 )
 
 MODEL = os.getenv("MODEL_NAME", "qwen2.5:1.5b")
+
+SYSTEM_PROMPT_PATH = Path(
+    os.getenv("SYSTEM_PROMPT_PATH", "/app/config/personality.txt")
+)
+
+
+def load_personality():
+    try:
+        return SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return "You are MACID_AI, a helpful private AI assistant."
 
 
 class ChatRequest(BaseModel):
@@ -40,7 +52,7 @@ async def chat(request: ChatRequest):
             messages=[
                 {
                     "role": "system",
-                    "content": "You are MACID_AI. Follow your configured personality and behavior."
+                    "content": load_personality()
                 },
                 {
                     "role": "user",
