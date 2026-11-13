@@ -6,6 +6,12 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from ollama import AsyncClient
 
+from backend.app.memory import (
+    initialize_memory,
+    save_message,
+    get_history
+)
+
 load_dotenv()
 
 app = FastAPI(
@@ -32,8 +38,14 @@ def load_personality():
         return "You are MACID_AI, a helpful private AI assistant."
 
 
+@app.on_event("startup")
+async def startup():
+    initialize_memory()
+
+
 class ChatRequest(BaseModel):
     message: str
+    session_id: str = "default"
 
 
 @app.get("/health")
@@ -47,22 +59,42 @@ async def health():
 @app.post("/chat")
 async def chat(request: ChatRequest):
     try:
+        history = get_history(request.session_id, limit=20)
+
+        messages = [
+            {
+                "role": "system",
+                "content": load_personality()
+            },
+            *history,
+            {
+                "role": "user",
+                "content": request.message
+            }
+        ]
+
         response = await ollama.chat(
             model=MODEL,
-            messages=[
-                {
-                    "role": "system",
-                    "content": load_personality()
-                },
-                {
-                    "role": "user",
-                    "content": request.message
-                }
-            ]
+            messages=messages
+        )
+
+        answer = response["message"]["content"]
+
+        save_message(
+            request.session_id,
+            "user",
+            request.message
+        )
+
+        save_message(
+            request.session_id,
+            "assistant",
+            answer
         )
 
         return {
-            "response": response["message"]["content"]
+            "response": answer,
+            "session_id": request.session_id
         }
 
     except Exception as error:
