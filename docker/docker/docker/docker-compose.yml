@@ -1,0 +1,17 @@
+services:
+  macid-ai:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: macid-ai
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      OLLAMA_URL: http://host.docker.internal:11434
+      MODEL_NAME: qwen2.5:1.5b
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ../data:/app/data
+      - ../config:/app/config
