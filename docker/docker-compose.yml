@@ -1,8 +1,8 @@
 services:
   macid-ai:
     build:
-      context: ../../..
-      dockerfile: docker/docker/docker/Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     container_name: macid-ai
     restart: unless-stopped
     ports:
@@ -13,5 +13,5 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ../../../data:/app/data
-      - ../../../config:/app/config
+      - ../data:/app/data
+      - ../config:/app/config
