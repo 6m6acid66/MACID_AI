@@ -1,6 +1,13 @@
-FROM python:3.12-slim
+FROM python:3.12-slim-trixie
+
+RUN apt-get update \
+	&& apt-get upgrade -y \
+	&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+	PYTHONUNBUFFERED=1
 
 COPY backend/requirements.txt .
 
