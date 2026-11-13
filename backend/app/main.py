@@ -56,6 +56,23 @@ async def health():
     }
 
 
+@app.get("/history/{session_id}")
+async def conversation_history(session_id: str):
+    try:
+        history = get_history(session_id, limit=100)
+
+        return {
+            "session_id": session_id,
+            "messages": history
+        }
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Could not load conversation history: {error}"
+        )
+
+
 @app.post("/chat")
 async def chat(request: ChatRequest):
     try:
