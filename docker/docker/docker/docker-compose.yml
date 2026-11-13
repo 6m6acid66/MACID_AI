@@ -1,8 +1,8 @@
 services:
   macid-ai:
     build:
-      context: ..
-      dockerfile: docker/Dockerfile
+      context: ../../..
+      dockerfile: docker/docker/Dockerfile
     container_name: macid-ai
     restart: unless-stopped
     ports:
