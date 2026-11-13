@@ -15,3 +15,14 @@ services:
     volumes:
       - ../data:/app/data
       - ../config:/app/config
+
+  macid-frontend:
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+    container_name: macid-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - macid-ai
